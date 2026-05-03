@@ -25,8 +25,9 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Health check
+// Health check + wake-up ping (no auth, public)
 app.get("/health", (_req, res) => res.json({ ok: true }));
+app.get("/ping",   (_req, res) => res.send("pong"));
 
 // Public routes
 app.use("/api/landing", require("./routes/landing"));
