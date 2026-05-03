@@ -6,8 +6,22 @@ const { connect } = require("./config/database");
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// CORS — allow configured origins or all in development
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map(o => o.trim())
+  : [];
+
+app.use(cors({
+  origin: allowedOrigins.length > 0
+    ? (origin, cb) => {
+        // Allow requests with no origin (mobile apps, curl, server-to-server)
+        if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+        cb(new Error(`CORS: origin ${origin} not allowed`));
+      }
+    : true,
+  credentials: true,
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 
